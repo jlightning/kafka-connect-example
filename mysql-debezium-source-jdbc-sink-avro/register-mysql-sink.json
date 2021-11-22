@@ -1,0 +1,28 @@
+{
+  "name": "jdbc-sink-mysql",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+    "tasks.max": "2",
+    "topics": "customers,addresses",
+    "connection.url": "jdbc:mysql://mysql:3306/inventory",
+    "connection.user": "root",
+    "connection.password": "debezium",
+    "dialect.name": "MySqlDatabaseDialect",
+    "auto.create": "true",
+    "auto.evolve": "true",
+    "name": "jdbc-sink-mysql",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": false,
+    "transforms.unwrap.delete.handling.mode": "rewrite",
+    "transforms.unwrap.add.fields": "table",
+    "insert.mode": "upsert",
+    "pk.fields": "id",
+    "pk.mode": "record_value",
+    "table.name.format": "replicated_${topic}",
+    "key.converter": "io.confluent.connect.avro.AvroConverter",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "key.converter.schema.registry.url": "http://schema-registry:8081",
+    "value.converter.schema.registry.url": "http://schema-registry:8081"
+  }
+}
