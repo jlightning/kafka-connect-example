@@ -1,21 +1,28 @@
 version: '2'
 services:
   zookeeper:
-    image: debezium/zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.0.0
     container_name: zookeeper
     ports:
      - "2181:2181"
      - "2888:2888"
      - "3888:3888"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
   kafka:
-    image: debezium/kafka:latest
+    image: confluentinc/cp-kafka:7.0.0
     container_name: kafka
     ports:
      - "9092:9092"
     links:
      - zookeeper
     environment:
-     - ZOOKEEPER_CONNECT=zookeeper:2181
+     - KAFKA_BROKER_ID=1
+     - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+     - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+     - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+     - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
   mysql:
     image: debezium/example-mysql:latest
     container_name: mysql
@@ -26,7 +33,7 @@ services:
      - MYSQL_USER=mysqluser
      - MYSQL_PASSWORD=mysqlpw
   schema-registry:
-    image: confluentinc/cp-schema-registry
+    image: confluentinc/cp-schema-registry:7.0.0
     container_name: schema_registry
     ports:
      - "8181:8181"
@@ -38,6 +45,7 @@ services:
      - SCHEMA_REGISTRY_LISTENERS=http://schema-registry:8081
     links:
      - zookeeper
+     - kafka
   connect:
     image: confluentinc/cp-kafka-connect:7.0.0
     hostname: connect
