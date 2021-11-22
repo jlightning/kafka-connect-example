@@ -32,20 +32,6 @@ services:
      - MYSQL_ROOT_PASSWORD=debezium
      - MYSQL_USER=mysqluser
      - MYSQL_PASSWORD=mysqlpw
-  schema-registry:
-    image: confluentinc/cp-schema-registry:7.0.0
-    container_name: schema_registry
-    ports:
-     - "8181:8181"
-     - "8081:8081"
-    environment:
-     - SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=kafka:9092
-     - SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL=zookeeper:2181
-     - SCHEMA_REGISTRY_HOST_NAME=schema-registry
-     - SCHEMA_REGISTRY_LISTENERS=http://schema-registry:8081
-    links:
-     - zookeeper
-     - kafka
   connect:
     image: confluentinc/cp-kafka-connect:7.0.0
     hostname: connect
@@ -53,7 +39,6 @@ services:
     depends_on:
       - zookeeper
       - kafka
-      - schema-registry
       - mysql
     links:
       - mysql
@@ -70,10 +55,8 @@ services:
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_KEY_CONVERTER: io.confluent.connect.avro.AvroConverter
-      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
-      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
-      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+      CONNECT_KEY_CONVERTER:  org.apache.kafka.connect.json.JsonConverter
+      CONNECT_VALUE_CONVERTER:  org.apache.kafka.connect.json.JsonConverter
       CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_ZOOKEEPER_CONNECT: 'zookeeper:2181'
