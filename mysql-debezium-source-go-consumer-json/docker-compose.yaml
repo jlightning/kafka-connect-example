@@ -1,7 +1,7 @@
 version: '2'
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.0.0
+    image: confluentinc/cp-zookeeper:7.2.0
     container_name: zookeeper
     ports:
      - "2181:2181"
@@ -11,7 +11,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
   kafka:
-    image: confluentinc/cp-kafka:7.0.0
+    image: confluentinc/cp-kafka:7.2.0
     container_name: kafka
     ports:
      - "9092:9092"
@@ -52,7 +52,7 @@ services:
 #      - ./go.mod:/srv/mysql-debezium-source-go-consumer-avro/go.mod
 #      - ./go.sum:/srv/mysql-debezium-source-go-consumer-avro/go.sum
   connect:
-    image: confluentinc/cp-kafka-connect:7.0.0
+    image: confluentinc/cp-kafka-connect:7.2.0
     hostname: connect
     container_name: connect
     depends_on:
@@ -85,8 +85,8 @@ services:
       - -c
       - |
         echo "Installing Connector"
-        confluent-hub install --no-prompt debezium/debezium-connector-mysql:1.7.0
-        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:latest
+        confluent-hub install --no-prompt debezium/debezium-connector-mysql:1.9.0
+        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.0.0
         #
         echo "Launching Kafka Connect worker"
         /etc/confluent/docker/run &
